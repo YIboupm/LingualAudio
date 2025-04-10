@@ -42,7 +42,7 @@ class AudioViewModel: ObservableObject {
     
     /// **更新音频摘要**
     func updateAudioSummary(audioID: Int, newSummary: String) {
-        guard let url = URL(string: "http://127.0.0.1:8001/audio/update_summary/\(audioID)") else { return }
+        guard let url = URL(string: "http://liangyibodeMac-mini.local:8001/audio/update_summary/\(audioID)") else { return }
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -63,7 +63,7 @@ class AudioViewModel: ObservableObject {
     
     /// **请求音频详情**
     func fetchAudioDetails(audioID: Int) {
-        guard let url = URL(string: "http://127.0.0.1:8001/audio/audio/\(audioID)") else { return }
+        guard let url = URL(string: "http://liangyibodeMac-mini.local:8001/audio/audio/\(audioID)") else { return }
         
         isLoadingDetail = true
         errorMessage = nil
@@ -143,7 +143,7 @@ class AudioViewModel: ObservableObject {
             
             isLoading = true
             let page = loadMore ? currentPage : 1
-            guard let url = URL(string: "http://127.0.0.1:8001/audio/user_audios/\(userID)?page=\(page)&page_size=\(pageSize)") else { return }
+            guard let url = URL(string: "http://liangyibodeMac-mini.local:8001/audio/user_audios/\(userID)?page=\(page)&page_size=\(pageSize)") else { return }
             
             URLSession.shared.dataTask(with: url) { data, response, error in
                 DispatchQueue.main.async {
@@ -182,23 +182,32 @@ class AudioViewModel: ObservableObject {
 
     /// **计算音频时长 (MM:SS)，兼容 iOS 16+**
     func getAudioDurationFormatted(url: URL) async -> String {
-        let asset = AVURLAsset(url: url)
+        // 尝试开启安全作用域
+        guard url.startAccessingSecurityScopedResource() else {
+            print("无法访问安全作用域资源")
+            return "未知时长"
+        }
+        defer { url.stopAccessingSecurityScopedResource() }
+        
+        let options = [AVURLAssetPreferPreciseDurationAndTimingKey: true]
+        let asset = AVURLAsset(url: url, options: options)
         
         do {
-            let duration = try await asset.load(.duration)  // ✅ 使用 await 方式加载
+            let duration = try await asset.load(.duration)
             let totalSeconds = CMTimeGetSeconds(duration)
             let minutes = Int(totalSeconds) / 60
             let seconds = Int(totalSeconds) % 60
-            
-            return String(format: "%02d:%02d", minutes, seconds) // 00:00 形式
+            return String(format: "%02d:%02d", minutes, seconds)
         } catch {
+            print("加载音频时长失败：\(error)")
             return "未知时长"
         }
     }
 
+
     /// **实际的上传逻辑**
     private func uploadAudioFile(url: URL, userID: Int, duration: String) async {
-        guard let serverURL = URL(string: "http://127.0.0.1:8001/audio/upload/") else { return }
+        guard let serverURL = URL(string: "http://liangyibodeMac-mini.local:8001/audio/upload/") else { return }
 
         var request = URLRequest(url: serverURL)
         request.httpMethod = "POST"
@@ -209,8 +218,25 @@ class AudioViewModel: ObservableObject {
         var body = Data()
         
         //添加文件大小
-        let fileData = try? Data(contentsOf: url)
+        //let fileData = try? Data(contentsOf: url)
+        //let fileSize = fileData?.count ?? 0
+        
+        
+        // 添加文件大小，使用安全作用域访问文件
+        var fileData: Data? = nil
+        if url.startAccessingSecurityScopedResource() {
+            defer { url.stopAccessingSecurityScopedResource() }
+            fileData = try? Data(contentsOf: url)
+            if let data = fileData {
+                print("文件大小：\(data.count) bytes")
+            } else {
+                print("无法读取文件数据")
+            }
+        } else {
+            print("无法访问安全作用域资源")
+        }
         let fileSize = fileData?.count ?? 0
+
 
         // -- 写入 file_size 字段
         body.append("--\(boundary)\r\n".data(using: .utf8)!)

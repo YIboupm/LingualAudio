@@ -6,6 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		D8B31BCB2DA456D100949EE9 /* MicrosoftCognitiveServicesSpeech.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = D8B31BC02DA42FF800949EE9 /* MicrosoftCognitiveServicesSpeech.xcframework */; };
+		D8B31BCC2DA456D100949EE9 /* MicrosoftCognitiveServicesSpeech.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D8B31BC02DA42FF800949EE9 /* MicrosoftCognitiveServicesSpeech.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		D87E5E262D38182600FFC779 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -23,10 +28,25 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		D8B31BCD2DA456D100949EE9 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				D8B31BCC2DA456D100949EE9 /* MicrosoftCognitiveServicesSpeech.xcframework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		D87E5E152D38182500FFC779 /* LingualAudio.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LingualAudio.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D87E5E252D38182600FFC779 /* LingualAudioTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LingualAudioTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D87E5E2F2D38182600FFC779 /* LingualAudioUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LingualAudioUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D8B31BC02DA42FF800949EE9 /* MicrosoftCognitiveServicesSpeech.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = MicrosoftCognitiveServicesSpeech.xcframework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -77,6 +97,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D8B31BCB2DA456D100949EE9 /* MicrosoftCognitiveServicesSpeech.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -100,6 +121,7 @@
 		D87E5E0C2D38182500FFC779 = {
 			isa = PBXGroup;
 			children = (
+				D8B31BBF2DA42D7700949EE9 /* Frameworks */,
 				D87E5E472D38199A00FFC779 /* Utils */,
 				D87E5E462D38197D00FFC779 /* Services */,
 				D87E5E452D38196400FFC779 /* ViewModels */,
@@ -122,6 +144,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		D8B31BBF2DA42D7700949EE9 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D8B31BC02DA42FF800949EE9 /* MicrosoftCognitiveServicesSpeech.xcframework */,
+			);
+			path = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -132,6 +162,7 @@
 				D87E5E112D38182500FFC779 /* Sources */,
 				D87E5E122D38182500FFC779 /* Frameworks */,
 				D87E5E132D38182500FFC779 /* Resources */,
+				D8B31BCD2DA456D100949EE9 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -432,8 +463,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"LingualAudio/Preview Content\"";
+				DEVELOPMENT_TEAM = PQT8A3CDP4;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "We need microphone access for speech recognition and translation\nWe need microphone access for speech recognition and translation\n";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -461,8 +494,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"LingualAudio/Preview Content\"";
+				DEVELOPMENT_TEAM = PQT8A3CDP4;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "We need microphone access for speech recognition and translation\n";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

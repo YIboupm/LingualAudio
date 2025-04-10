@@ -123,7 +123,7 @@ struct LoginView: View {
 
     // 登录用户函数
     private func loginUser(email: String, password: String) {
-        guard let url = URL(string: "http://127.0.0.1:8000/auth/login") else { return }
+        guard let url = URL(string: "http://liangyibodeMac-mini.local:8000/auth/login") else { return }
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")

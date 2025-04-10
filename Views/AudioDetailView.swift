@@ -6,126 +6,137 @@
 //
 import SwiftUI
 import AVKit
+import AVFoundation
+
+
 
 struct AudioDetailView: View {
     let audioID: Int
     @StateObject private var viewModel = AudioViewModel()
     @State private var summaryText: String = "加载中..."
     @State private var isEditing: Bool = false
+    @State private var highlightedWord: String = ""
     @Environment(\.dismiss) var dismiss
 
     var body: some View {
-        VStack(spacing: 15) {
-            if let audio = viewModel.selectedAudio {
-                // ✅ 语音文件名
-                Text(audio.filename)
-                    .font(.title)
-                    .bold()
-                    .padding()
-
-                // ✅ 语言和时长
-                HStack {
-                    Text("🌍 语言: \(audio.sourceLanguage)")
-                        .font(.headline)
-                    Spacer()
-                    Text("⏳ 时长: \(audio.duration)")
-                        .font(.headline)
-                }
-                .padding(.horizontal)
-
-                Divider()
-
-                // ✅ 音频播放器
-                if let url = URL(string: audio.fileURL) {
-                    AudioPlayerView(url: url)
-                        .frame(height: 50)
-                        .padding()
-                }
-
-                Divider()
-
-                // ✅ 转录内容 & 摘要
-                Picker("显示内容", selection: $isEditing) {
-                    Text("🎤 转录内容").tag(false)
-                    Text("📝 摘要").tag(true)
-                }
-                .pickerStyle(SegmentedPickerStyle())
-                .padding(.horizontal)
-
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 10) {
-                        if isEditing {
-                            TextEditor(text: $summaryText)
-                                .frame(minHeight: 150)
-                                .padding()
-                                .background(Color.gray.opacity(0.1))
-                                .cornerRadius(8)
-                        } else {
-                            Text(audio.originalTranscript)
-                                .font(.body)
-                                .padding()
-                        }
-                    }
-                }
+        VStack(alignment: .leading, spacing: 16) {
+            // 顶部标题和关闭按钮
+            HStack {
+                Text(viewModel.selectedAudio?.filename ?? "音频详情")
+                    .font(.title2).bold()
 
                 Spacer()
 
-                // ✅ 底部按钮
+                Button("关闭") {
+                    dismiss()
+                }
+                .foregroundColor(.white)
+                .padding(.horizontal, 16).padding(.vertical, 8)
+                .background(Color.red)
+                .cornerRadius(8)
+            }
+            .padding([.horizontal, .top])
+
+            // 如果正在加载或加载失败，显示提示
+            if viewModel.isLoadingDetail {
+                ProgressView("加载中...")
+                    .padding()
+                Spacer()
+            } else if let error = viewModel.errorMessage {
+                Text("❌ \(error)")
+                    .padding()
+                Spacer()
+            } else if let audio = viewModel.selectedAudio {
+                // 播放器（缩小高度，按钮可改小）
+                if let url = URL(string: "http://liangyibodeMac-mini.local:8001/audio/audio/play/\(audioID)"),
+                   let wordTimestamps = audio.wordTimestamps {
+                    AdvancedAudioPlayerView(
+                        url: url,
+                        wordTimestamps: wordTimestamps,
+                        highlightWord: $highlightedWord
+                    )
+                    .frame(height: 120) // 控制播放器高度
+                    .padding(.horizontal)
+                }
+
+                // 分割线 & 语言、时长
+                Divider().padding(.horizontal)
+                HStack {
+                    Text("语言: \(audio.sourceLanguage)")
+                        .font(.subheadline)
+                    Spacer()
+                    Text("时长: \(audio.duration)")
+                        .font(.subheadline)
+                }
+                .padding(.horizontal, 16)
+
+                // 选择显示转录 / 摘要
+                Picker("显示内容", selection: $isEditing) {
+                    Text("转录").tag(false)
+                    Text("摘要").tag(true)
+                }
+                .pickerStyle(SegmentedPickerStyle())
+                .padding(.horizontal, 16)
+
+                // 文本内容
+                if isEditing {
+                    TextEditor(text: $summaryText)
+                        .frame(minHeight: 200)
+                        .padding()
+                        .background(Color.gray.opacity(0.1))
+                        .cornerRadius(8)
+                        .padding(.horizontal, 16)
+                } else {
+                    ScrollView {
+                        Text(attributedTranscript(audio.originalTranscript, highlightedWord: highlightedWord))
+                            .font(.body)
+                            .padding()
+                    }
+                    .frame(minHeight: 200)
+                    .padding(.horizontal, 16)
+                }
+
+                // 底部按钮
                 HStack {
                     if isEditing {
-                        Button(action: {
+                        Button("保存") {
                             viewModel.updateAudioSummary(audioID: audioID, newSummary: summaryText)
                             isEditing = false
-                        }) {
-                            Text("保存")
-                                .foregroundColor(.white)
-                                .padding()
-                                .frame(maxWidth: .infinity)
-                                .background(Color.green)
-                                .cornerRadius(10)
                         }
-                    }
-                    
-                    Button(action: { dismiss() }) {
-                        Text("关闭")
-                            .foregroundColor(.white)
-                            .padding()
-                            .frame(maxWidth: .infinity)
-                            .background(Color.red)
-                            .cornerRadius(10)
+                        .foregroundColor(.white)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.green)
+                        .cornerRadius(10)
                     }
                 }
-                .padding()
-            } else {
-                if viewModel.isLoadingDetail {
-                    ProgressView("加载中...")
-                } else {
-                    Text("❌ \(viewModel.errorMessage ?? "加载失败")")
-                }
+                .padding(.horizontal, 16)
+                .padding(.bottom, 16)
             }
         }
         .onAppear {
             viewModel.fetchAudioDetails(audioID: audioID)
         }
-        .padding()
-        .background(.ultraThinMaterial)
-        .cornerRadius(20)
-        .shadow(radius: 10)
-        .padding(.horizontal, 20)
+        .background(Color(UIColor.systemGroupedBackground)) // 整体浅色背景
+        .edgesIgnoringSafeArea(.bottom)
+    }
+
+    // 你的高亮逻辑不变
+    private func attributedTranscript(_ transcript: String, highlightedWord: String) -> AttributedString {
+        guard !highlightedWord.isEmpty else {
+            return AttributedString(transcript)
+        }
+        var attributedString = AttributedString(transcript)
+        if let range = attributedString.range(of: highlightedWord,
+                                              options: [.caseInsensitive, .diacriticInsensitive]) {
+            attributedString[range].foregroundColor = .red
+            attributedString[range].backgroundColor = .yellow.opacity(0.3)
+            attributedString[range].font = .system(size: 16, weight: .bold)
+        }
+        return attributedString
     }
 }
 
-/// **音频播放器**
-struct AudioPlayerView: View {
-    let url: URL
-    private var player: AVPlayer { AVPlayer(url: url) }
-
-    var body: some View {
-        VideoPlayer(player: player)
-            .onAppear { player.play() }
-            .onDisappear { player.pause() }
-    }
-}
 
 /// **Preview**
 #Preview {

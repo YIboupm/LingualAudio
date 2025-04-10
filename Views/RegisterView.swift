@@ -95,7 +95,7 @@ struct RegisterView: View {
     }
     
     func registerUser(email: String, password: String, fullName: String) {
-        guard let url = URL(string: "http://127.0.0.1:8000/auth/register") else { return }
+        guard let url = URL(string: "http://liangyibodeMac-mini.local:8000/auth/register") else { return }
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")

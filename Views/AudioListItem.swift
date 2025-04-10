@@ -30,6 +30,10 @@ struct AudioListItem: View {
                 Image(systemName: "arrow.up.circle.fill")
                     .foregroundColor(.green)
                     .padding(.trailing, 5)
+            }else if audio.audioType == "RECORDED"{
+                Image (systemName: "mic.circle.fill")
+                    .foregroundColor(.red)
+                    .padding(.trailing,5)
             }
 
             VStack(alignment: .leading, spacing: 4) {

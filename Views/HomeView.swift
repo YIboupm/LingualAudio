@@ -133,10 +133,7 @@ struct HomeView: View {
                 HStack {
                     Spacer()
                     FloatingButtons(
-                        isRecording: $isRecording,
                         isShowingFilePicker: $isShowingFilePicker,
-                        startRecording: startRecording,
-                        stopRecording: stopRecording,
                         uploadFile: uploadFile,
                         audioViewModel: audioViewModel
                     )
@@ -146,16 +143,7 @@ struct HomeView: View {
         }
     }
 
-    // ✅ 录音功能
-    private func startRecording() {
-        print("🎤 开始录音...")
-        isRecording = true
-    }
-
-    private func stopRecording() {
-        print("🛑 停止录音...")
-        isRecording = false
-    }
+    
 
     // ✅ 上传文件功能
     private func uploadFile(url: URL, userID: Int) {

@@ -10,10 +10,9 @@ import Foundation
 import UniformTypeIdentifiers
 
 struct FloatingButtons: View {
-    @Binding var isRecording: Bool
+    
     @Binding var isShowingFilePicker: Bool
-    var startRecording: () -> Void
-    var stopRecording: () -> Void
+    
     var uploadFile: (URL, Int) -> Void  //  确保上传时带上 userID
     @ObservedObject var audioViewModel: AudioViewModel  //  让 FloatingButtons 访问 ViewModel
 
@@ -77,16 +76,16 @@ struct FloatingButtons: View {
                     showLoginView = true
                 }
             }) {
-                Image(systemName: isRecording ? "stop.fill" : "mic.fill")
-                    .font(.system(size: 24))
-                    .foregroundColor(.white)
-                    .padding()
-                    .background(isRecording ? Color.red : Color.green)
-                    .clipShape(Circle())
-                    .shadow(radius: 5)
+                Image(systemName: "mic.fill")
+                                    .font(.system(size: 24))
+                                    .foregroundColor(.white)
+                                    .padding()
+                                    .background(Color.green)
+                                    .clipShape(Circle())
+                                    .shadow(radius: 5)
             }
             .sheet(isPresented: $showRecordingView) {
-                RecordingView(isRecording: $isRecording)
+                RecordingView()
             }
             .sheet(isPresented: $showLoginView) {
                 LoginView()
@@ -103,10 +102,7 @@ struct FloatingButtons_Previews: PreviewProvider {
 
     static var previews: some View {
         FloatingButtons(
-            isRecording: $isRecording,
             isShowingFilePicker: $isShowingFilePicker,
-            startRecording: {},
-            stopRecording: {},
             uploadFile: {_,_ in },
             audioViewModel: sampleAudioViewModel // ✅ 传入示例实例
         )
