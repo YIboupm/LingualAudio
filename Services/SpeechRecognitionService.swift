@@ -20,8 +20,8 @@ class SpeechRecognitionService: ObservableObject {
 
     func startRecognition(userID: Int, completion: @escaping (Bool) -> Void) {
             // ✅ 修改：直接硬编码你的 Azure 订阅 key 和区域（后续建议从配置中读取）
-            let subscriptionKey = "8y5mir3A2CLaf6XDZXDbkDbBaozygrmF2Edxrf0nHBCvZE1IHqHyJQQJ99BDAC5RqLJXJ3w3AAAYACOGa4zc" // 替换为真实 key
-            let region = "westeurope" // 区域保持不变
+            let subscriptionKey = "xxxxxxx" // 替换为真实 key
+            let region = "xxxxx" // 区域保持不变
             
             // ✅ 读取用户设置的语言
             let selectedLanguage = UserDefaults.standard.string(forKey: "selectedLanguage") ?? "en-US"
